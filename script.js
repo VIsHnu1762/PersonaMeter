@@ -9,26 +9,88 @@
 let currentQuestionIndex = 0;
 let userAnswers = {}; // Store user answers: { questionId: weight }
 let startTime = null;
+let progressRestored = false;
+
+// ===========================
+// Progress Management
+// ===========================
+/**
+ * Save current progress to localStorage
+ */
+function saveProgress() {
+    const progressData = {
+        currentQuestionIndex,
+        userAnswers,
+        startTime: startTime ? startTime.toISOString() : null,
+        timestamp: new Date().toISOString()
+    };
+    localStorage.setItem('quizProgress', JSON.stringify(progressData));
+}
+
+/**
+ * Check if there's saved progress
+ */
+function hasSavedProgress() {
+    return localStorage.getItem('quizProgress') !== null;
+}
+
+/**
+ * Restore progress from localStorage
+ */
+function restoreProgress() {
+    const savedData = localStorage.getItem('quizProgress');
+    if (!savedData) return false;
+
+    try {
+        const progressData = JSON.parse(savedData);
+        currentQuestionIndex = progressData.currentQuestionIndex || 0;
+        userAnswers = progressData.userAnswers || {};
+        startTime = progressData.startTime ? new Date(progressData.startTime) : new Date();
+        progressRestored = true;
+        return true;
+    } catch (e) {
+        console.error('Error restoring progress:', e);
+        return false;
+    }
+}
+
+/**
+ * Clear saved progress
+ */
+function clearProgress() {
+    localStorage.removeItem('quizProgress');
+}
 
 // DOM Elements
 const welcomeScreen = document.getElementById('welcome-screen');
 const quizScreen = document.getElementById('quiz-screen');
+const questionCard = document.querySelector('.question-card');
 const startBtn = document.getElementById('start-btn');
+const resumeBtn = document.getElementById('resume-btn');
+const startFreshBtn = document.getElementById('start-fresh-btn');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
+const reviewBtn = document.getElementById('review-btn');
 const submitBtn = document.getElementById('submit-btn');
 const progressText = document.getElementById('progress-text');
 const progressFill = document.getElementById('progress-fill');
 const categoryBadge = document.getElementById('category-badge');
 const questionText = document.getElementById('question-text');
 const optionsContainer = document.getElementById('options-container');
+const progressAlert = document.getElementById('progress-alert');
 
 // ===========================
 // Event Listeners
 // ===========================
-startBtn.addEventListener('click', startQuiz);
+startBtn.addEventListener('click', () => startQuiz(false));
+if (resumeBtn) resumeBtn.addEventListener('click', () => startQuiz(true));
+if (startFreshBtn) startFreshBtn.addEventListener('click', () => {
+    clearProgress();
+    startQuiz(false);
+});
 prevBtn.addEventListener('click', showPreviousQuestion);
 nextBtn.addEventListener('click', showNextQuestion);
+if (reviewBtn) reviewBtn.addEventListener('click', showReviewPage);
 submitBtn.addEventListener('click', submitQuiz);
 
 // ===========================
@@ -37,20 +99,23 @@ submitBtn.addEventListener('click', submitQuiz);
 /**
  * Initialize and start the quiz
  */
-function startQuiz() {
+function startQuiz(resume = false) {
     // Hide welcome screen, show quiz screen
     welcomeScreen.classList.remove('active');
     quizScreen.classList.add('active');
 
-    // Record start time
-    startTime = new Date();
-
-    // Reset state
-    currentQuestionIndex = 0;
-    userAnswers = {};
-
-    // Display first question
-    displayQuestion();
+    if (resume && restoreProgress()) {
+        // Progress restored
+        console.log(`Resuming from question ${currentQuestionIndex + 1}`);
+        displayQuestion();
+    } else {
+        // Start fresh
+        startTime = new Date();
+        currentQuestionIndex = 0;
+        userAnswers = {};
+        clearProgress();
+        displayQuestion();
+    }
 }
 
 // ===========================
@@ -62,12 +127,20 @@ function startQuiz() {
 function displayQuestion() {
     const question = questionsData[currentQuestionIndex];
 
+    // Re-query DOM elements in case they were replaced
+    const currentQuestionText = document.getElementById('question-text');
+    const currentCategoryBadge = document.getElementById('category-badge');
+
     // Update question text
-    questionText.textContent = question.question;
+    if (currentQuestionText) {
+        currentQuestionText.textContent = question.question;
+    }
 
     // Update category badge
-    categoryBadge.textContent = question.category;
-    updateCategoryBadgeColor(question.category);
+    if (currentCategoryBadge) {
+        currentCategoryBadge.textContent = question.category;
+        updateCategoryBadgeColor(question.category);
+    }
 
     // Update progress
     updateProgress();
@@ -83,8 +156,13 @@ function displayQuestion() {
  * Display options for the current question
  */
 function displayOptions(question) {
+    // Re-query the options container
+    const currentOptionsContainer = document.getElementById('options-container');
+
+    if (!currentOptionsContainer) return;
+
     // Clear existing options
-    optionsContainer.innerHTML = '';
+    currentOptionsContainer.innerHTML = '';
 
     // Create option elements
     question.options.forEach((option, index) => {
@@ -118,7 +196,7 @@ function displayOptions(question) {
         // Append elements
         optionDiv.appendChild(radio);
         optionDiv.appendChild(label);
-        optionsContainer.appendChild(optionDiv);
+        currentOptionsContainer.appendChild(optionDiv);
     });
 }
 
@@ -130,8 +208,11 @@ function selectOption(questionId, weight, selectedDiv) {
     userAnswers[questionId] = weight;
 
     // Update UI - remove 'selected' class from all options
-    const allOptions = optionsContainer.querySelectorAll('.option');
-    allOptions.forEach(opt => opt.classList.remove('selected'));
+    const currentOptionsContainer = document.getElementById('options-container');
+    if (currentOptionsContainer) {
+        const allOptions = currentOptionsContainer.querySelectorAll('.option');
+        allOptions.forEach(opt => opt.classList.remove('selected'));
+    }
 
     // Add 'selected' class to clicked option
     selectedDiv.classList.add('selected');
@@ -140,8 +221,11 @@ function selectOption(questionId, weight, selectedDiv) {
     const radio = selectedDiv.querySelector('input[type="radio"]');
     radio.checked = true;
 
-    // Enable next button
-    nextBtn.disabled = false;
+    // Update navigation buttons (enables submit button on last question)
+    updateNavigationButtons();
+
+    // Save progress after each answer
+    saveProgress();
 
     // Auto-advance after selection (optional - can be removed if not desired)
     if (currentQuestionIndex < questionsData.length - 1) {
@@ -185,6 +269,11 @@ function updateNavigationButtons() {
     const currentQuestion = questionsData[currentQuestionIndex];
     const isAnswered = userAnswers.hasOwnProperty(currentQuestion.id);
 
+    // Show review button if there are any answers
+    if (Object.keys(userAnswers).length > 0) {
+        reviewBtn.style.display = 'inline-block';
+    }
+
     // Next button
     if (currentQuestionIndex === questionsData.length - 1) {
         // Last question - hide next, show submit
@@ -197,6 +286,82 @@ function updateNavigationButtons() {
         submitBtn.style.display = 'none';
         nextBtn.disabled = !isAnswered;
     }
+}
+
+// Review Answers Page
+function showReviewPage() {
+    // Hide navigation buttons
+    document.querySelector('.nav-buttons').style.display = 'none';
+
+    const reviewHTML = `
+        <div class="review-container">
+            <h2>Review Your Answers</h2>
+            <p class="review-info">Review your responses before submitting. Click on any question to edit your answer.</p>
+            <div class="review-grid">
+                ${questionsData.map((q, idx) => {
+        const answer = userAnswers[q.id];
+        const answered = answer !== undefined;
+        return `
+                        <div class="review-item ${answered ? 'answered' : 'unanswered'}" data-question-index="${idx}">
+                            <div class="review-header">
+                                <strong>Question ${idx + 1}</strong>
+                                <span class="category-badge">${q.category}</span>
+                            </div>
+                            <p class="review-question">${q.question}</p>
+                            ${answered ?
+                `<p class="review-answer">✓ ${q.options.find(opt => opt.weight === answer).text}</p>` :
+                `<p class="review-unanswered">Not answered yet</p>`
+            }
+                        </div>
+                    `;
+    }).join('')}
+            </div>
+            <div class="review-actions">
+                <button id="back-to-quiz-btn" class="btn btn-secondary">Back to Quiz</button>
+                <button id="submit-from-review-btn" class="btn btn-primary" ${Object.keys(userAnswers).length < questionsData.length ? 'disabled' : ''}>
+                    Submit Test
+                </button>
+            </div>
+        </div>
+    `;
+
+    questionCard.innerHTML = reviewHTML;
+
+    // Add click handlers for review items
+    document.querySelectorAll('.review-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const questionIndex = parseInt(item.dataset.questionIndex);
+            currentQuestionIndex = questionIndex;
+            restoreQuestionDisplay();
+        });
+    });
+
+    // Back to quiz button
+    document.getElementById('back-to-quiz-btn').addEventListener('click', () => {
+        restoreQuestionDisplay();
+    });
+
+    // Submit from review
+    document.getElementById('submit-from-review-btn').addEventListener('click', () => {
+        submitQuiz();
+    });
+}
+
+/**
+ * Restore normal question display from review page
+ */
+function restoreQuestionDisplay() {
+    // Clear review content
+    questionCard.innerHTML = `
+        <h2 id="question-text" class="question-text"></h2>
+        <div id="options-container" class="options-container"></div>
+    `;
+
+    // Show navigation buttons
+    document.querySelector('.nav-buttons').style.display = 'flex';
+
+    // Display the current question
+    displayQuestion();
 }
 
 /**
@@ -432,5 +597,15 @@ window.addEventListener('beforeunload', (e) => {
         e.preventDefault();
         e.returnValue = 'You have unsaved progress. Are you sure you want to leave?';
         return e.returnValue;
+    }
+});
+
+// ===========================
+// Page Load Initialization
+// ===========================
+window.addEventListener('DOMContentLoaded', () => {
+    // Check for saved progress on page load
+    if (hasSavedProgress()) {
+        progressAlert.style.display = 'block';
     }
 });

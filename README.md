@@ -2,7 +2,7 @@
 
 A comprehensive web-based psychological assessment tool designed to evaluate four key professional personality traits in students and professionals. This system provides detailed insights into Communication, Leadership, Stress Management, and Teamwork capabilities.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)
@@ -36,12 +36,18 @@ A comprehensive web-based psychological assessment tool designed to evaluate fou
 - **Interactive UI** - Smooth animations and engaging user experience
 - **Responsive Design** - Works seamlessly on desktop, tablet, and mobile devices
 
+### 🆕 NEW: Enhanced User Experience (v2.0)
+- 💾 **Auto-Save Progress** - Never lose your answers! The system automatically saves your progress after each question
+- 🔄 **Resume Capability** - Return anytime and continue from where you left off
+- 👁️ **Review Answers** - Review all your responses before final submission with easy navigation to edit answers
+- 📄 **PDF Export** - Download your assessment results as a professional PDF report
+
 ### User Experience
 - ✅ One question per page for focused attention
 - ✅ Visual category badges for each question
 - ✅ Auto-advance after answer selection (optional)
 - ✅ Keyboard navigation support (Arrow keys, number keys)
-- ✅ Prevention of accidental data loss
+- ✅ Prevention of accidental data loss with auto-save
 - ✅ Clean and modern interface design
 
 ### Results & Analytics
@@ -49,7 +55,8 @@ A comprehensive web-based psychological assessment tool designed to evaluate fou
 - 📈 Category-wise score breakdown
 - 💡 Personalized improvement suggestions
 - 🎯 Classification into three personality types
-- 📄 Printable results page
+- 📄 Downloadable PDF reports
+- 🖨️ Printable results page
 - 🔄 Option to retake assessment
 
 ## 🎯 Demo
@@ -78,6 +85,8 @@ start index.html  # Windows
 | **HTML5** | Structure and semantic markup |
 | **CSS3** | Styling, animations, and responsive design |
 | **Vanilla JavaScript** | Quiz logic, calculations, and interactivity |
+| **jsPDF** | PDF generation for downloadable reports |
+| **html2canvas** | Canvas rendering for PDF export |
 | **Chart.js** | Data visualization and graphing |
 | **LocalStorage API** | Temporary result storage |
 
