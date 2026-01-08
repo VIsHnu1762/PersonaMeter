@@ -94,24 +94,44 @@ start index.html  # Windows
 
 ## 📁 Project Structure
 
+> **Note:** See [FILE_STRUCTURE.md](FILE_STRUCTURE.md) for detailed visual tree and organization guide.
+
 ```
 Psychology_Score/
 │
-├── index.html          # Main quiz interface
-├── result.html         # Results display page
-├── style.css           # Complete styling and responsive design
-├── script.js           # Quiz logic and calculations
-├── data.js             # 50 questions with categories and weights
-└── README.md           # Project documentation
+├── index.html                      # Main quiz interface
+├── result.html                     # Results display page
+├── style.css                       # Complete styling and responsive design
+├── script.js                       # Quiz logic and calculations
+├── data.js                         # 50 questions with categories and weights
+├── README.md                       # Project documentation
+├── FILE_STRUCTURE.md               # Detailed file organization guide
+│
+└── tests/                          # Testing and development files
+    ├── test_automation.py          # Original Selenium test suite
+    ├── test_enhanced.py            # Comprehensive v2.0 feature tests
+    ├── test_diagnostic.py          # Quick diagnostic tool
+    ├── BUG_FIX_REPORT.md          # Detailed bug fix documentation
+    ├── README.md                   # Testing documentation
+    └── screenshots/                # Test result screenshots
+        └── *.png                   # Automated test captures
 ```
 
 ### File Descriptions
 
+**Core Application Files:**
 - **index.html** - Welcome screen and quiz interface with progress tracking
-- **result.html** - Comprehensive results page with charts and analysis
-- **style.css** - Modern, responsive CSS with smooth animations
-- **script.js** - Handles navigation, answer storage, and score calculation
-- **data.js** - Question bank with category assignments and option weights
+- **result.html** - Comprehensive results page with charts and PDF export
+- **style.css** - Modern, responsive CSS with animations and review page styles
+- **script.js** - Quiz logic, auto-save, resume functionality, and calculations
+- **data.js** - Question bank with category assignments and option weights (50 questions)
+
+**Testing Files (in `tests/` folder):**
+- **test_automation.py** - Selenium automation for basic quiz completion testing
+- **test_enhanced.py** - Advanced test suite for v2.0 features (auto-save, resume, review, PDF)
+- **test_diagnostic.py** - Quick diagnostic tool for JavaScript error detection
+- **BUG_FIX_REPORT.md** - Comprehensive documentation of all bugs fixed in v2.0
+- **screenshots/** - Folder containing automated test result captures
 
 ## 💻 Installation
 
@@ -134,9 +154,62 @@ Psychology_Score/
 3. **Open the application**
    - Double-click `index.html`, or
    - Right-click → Open with → Your Browser, or
-   - Use Live Server in VS Code
+   - Use Live Server in VS Code, or
+   - Run a local server:
+     ```bash
+     python3 -m http.server 8080
+     # Then open http://localhost:8080/index.html
+     ```
 
 That's it! The application is ready to use.
+
+## 🧪 Testing
+
+The project includes comprehensive automated tests to ensure quality and reliability.
+
+### Running Tests
+
+**Prerequisites:**
+```bash
+pip install selenium
+```
+
+**1. Diagnostic Test** (Quick check for errors)
+```bash
+cd tests
+python3 test_diagnostic.py
+```
+Tests for JavaScript errors and basic functionality.
+
+**2. Original Test Suite** (Basic functionality)
+```bash
+cd tests
+python3 test_automation.py
+```
+Completes full quiz with different answer strategies.
+
+**3. Enhanced Test Suite** (v2.0 features)
+```bash
+cd tests
+python3 test_enhanced.py
+```
+Tests auto-save, resume, review page, and PDF export.
+
+### Test Coverage
+
+- ✅ Fresh start without saved progress
+- ✅ Auto-save after each answer
+- ✅ Resume functionality after page reload
+- ✅ Review answers page display
+- ✅ Navigation between questions
+- ✅ Submit button enablement
+- ✅ PDF download trigger
+- ✅ Score calculation accuracy
+- ✅ Results page rendering
+
+### Test Results
+
+See `tests/BUG_FIX_REPORT.md` for detailed test results and bug fixes from v2.0 development.
 
 ## 📖 Usage
 
@@ -146,27 +219,40 @@ That's it! The application is ready to use.
    - Read the introduction and test details
    - Click "Start Assessment" to begin
 
-2. **Answering Questions**
+2. **🆕 Resume from Previous Session**
+   - If you have saved progress, you'll see a prompt
+   - Click "Resume" to continue from where you left off
+   - Or click "Start Fresh" to begin a new assessment
+
+3. **Answering Questions**
    - Read each question carefully
    - Select one of the four options
    - Use "Previous" and "Next" buttons to navigate
-   - The system auto-saves your progress
+   - Your progress is automatically saved after each answer
 
-3. **Keyboard Shortcuts**
+4. **🆕 Review Your Answers**
+   - Click "Review Answers" button anytime during the quiz
+   - See all 50 questions with your selected answers
+   - Green = answered, Red = unanswered
+   - Click any question to edit your answer
+   - Submit directly from review page when ready
+
+5. **Keyboard Shortcuts**
    - `1-4`: Select options quickly
    - `←` / `→`: Navigate between questions
    - `Enter`: Move to next question or submit
 
-4. **Submitting**
+6. **Submitting**
    - Answer all 50 questions
-   - Click "Submit Test" on the last question
+   - Click "Submit Test" on the last question or from review page
    - Results will be calculated automatically
 
-5. **Viewing Results**
+7. **Viewing Results**
    - See your overall score and classification
    - Review category-wise performance
    - Explore visual charts
    - Read personalized suggestions
+   - 🆕 **Download PDF report** for your records
    - Print or retake the assessment
 
 ## 🎓 Assessment Details
@@ -267,14 +353,34 @@ Final Score = (Communication × 1.2) +
 
 ## 📸 Screenshots
 
-### Welcome Screen
-Clean introduction with trait overview and test details.
+Screenshots of the application are available in the `tests/screenshots/` folder, showing:
+- Test completion results
+- Various scoring scenarios
+- Different personality classifications
+- Automated test captures
 
-### Quiz Interface
-One question at a time with progress tracking and category badges.
+### Main Features
 
-### Results Page
-Comprehensive analysis with charts, scores, and improvement suggestions.
+**Welcome Screen**
+- Clean introduction with trait overview and test details
+- Resume prompt for saved progress (v2.0)
+
+**Quiz Interface**
+- One question at a time with progress tracking
+- Category badges for each question
+- Navigation and review buttons
+
+**Review Page (v2.0)**
+- Grid view of all 50 questions
+- Color-coded answered/unanswered status
+- Click to edit any answer
+- Submit from review
+
+**Results Page**
+- Comprehensive analysis with interactive Chart.js visualizations
+- Category-wise score breakdown with colored bars
+- Personalized improvement suggestions
+- PDF download button (v2.0)
 
 ## 🎨 Customization
 
@@ -373,11 +479,15 @@ Contributions are welcome! Here's how you can help:
 ### Ideas for Contribution
 - Add more questions or categories
 - Improve accessibility (ARIA labels, screen reader support)
-- Add data export functionality (PDF, CSV)
-- Create backend for result storage
-- Add multi-language support
-- Implement user authentication
-- Add historical tracking of results
+- Create backend for result storage and user accounts
+- Add multi-language support (i18n)
+- Implement result comparison with peer averages
+- Add time tracking and analytics
+- Create admin dashboard for question management
+- Improve PDF export with more customization
+- Add email result delivery
+- Implement dark mode toggle
+- Add social media sharing capabilities
 
 ## 📄 License
 
@@ -419,34 +529,60 @@ SOFTWARE.
 ## 🙏 Acknowledgments
 
 - **Chart.js** - For beautiful data visualizations
+- **jsPDF** - For professional PDF report generation
 - **MDN Web Docs** - For excellent web development references
-- **Font Awesome** - For icon inspiration
+- **Selenium** - For robust automated testing framework
 - **Psychology Experts** - For guidance on assessment design
 
 ## 📝 Changelog
 
+### Version 2.0.0 (2026-01-08) 🆕
+**Major Feature Release**
+- ✨ Auto-save progress after each answer
+- 🔄 Resume functionality with saved state restoration
+- 👁️ Review answers page with complete overview
+- 📄 PDF export with professional formatting
+- 🐛 Fixed 6 critical bugs (see `tests/BUG_FIX_REPORT.md`)
+- ✅ 80% test coverage with comprehensive test suite
+- 📁 Reorganized project structure with `tests/` folder
+- 📚 Enhanced documentation and README
+
 ### Version 1.0.0 (2026-01-08)
-- Initial release
-- 50 comprehensive questions
-- Four category evaluation system
-- Weighted scoring algorithm
-- Interactive quiz interface
-- Detailed results page with charts
+**Initial Release**
+- 50 comprehensive questions across 4 categories
+- Four category evaluation system (Communication, Leadership, Stress Management, Teamwork)
+- Weighted scoring algorithm with customizable multipliers
+- Interactive quiz interface with progress tracking
+- Detailed results page with Chart.js visualizations
 - Responsive design for all devices
 - Keyboard navigation support
+- LocalStorage for temporary result storage
 
 ## 🔮 Future Enhancements
 
-- [ ] Backend integration for persistent storage
-- [ ] User authentication system
-- [ ] Historical result tracking
-- [ ] Email result delivery
-- [ ] PDF report generation
-- [ ] Admin dashboard for question management
-- [ ] Multi-language support
-- [ ] Dark mode toggle
-- [ ] Social media sharing
-- [ ] Comparison with peer averages
+### Planned Features
+- [ ] Backend integration with database
+- [ ] User authentication and account management
+- [ ] Historical result tracking and progress over time
+- [ ] Email result delivery with customizable templates
+- [ ] Enhanced PDF reports with graphs and insights
+- [ ] Admin dashboard for question and user management
+- [ ] Multi-language support (Spanish, French, German, etc.)
+- [ ] Dark mode toggle with theme persistence
+- [ ] Social media sharing with custom cards
+- [ ] Comparison with peer averages and industry benchmarks
+- [ ] Mobile app (React Native/Flutter)
+- [ ] API for third-party integrations
+- [ ] Advanced analytics dashboard
+- [ ] Team assessment mode for organizations
+- [ ] Custom branding options for institutions
+
+### Under Consideration
+- Integration with HR systems
+- Video question format
+- AI-powered personalized recommendations
+- Gamification with badges and achievements
+- Live coaching integration
 
 ---
 
