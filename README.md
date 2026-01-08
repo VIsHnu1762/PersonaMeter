@@ -26,7 +26,7 @@ A comprehensive web-based psychological assessment tool designed to evaluate fou
 - [License](#license)
 - [Contact](#contact)
 
-## ✨ Features
+## Features
 
 ### Core Functionality
 - **50 Comprehensive Questions** - Carefully designed MCQ questions covering four professional traits
@@ -59,7 +59,7 @@ A comprehensive web-based psychological assessment tool designed to evaluate fou
 - 🖨️ Printable results page
 - 🔄 Option to retake assessment
 
-## 🎯 Demo
+## Demo
 
 ### Live Preview
 Open `index.html` in your browser to start the assessment.
@@ -78,7 +78,7 @@ open index.html
 start index.html  # Windows
 ```
 
-## 🛠️ Technologies Used
+## Technologies Used
 
 | Technology | Purpose |
 |------------|---------|
@@ -92,7 +92,7 @@ start index.html  # Windows
 
 **No frameworks or build tools required** - Just pure web technologies!
 
-## 📁 Project Structure
+## Project Structure
 
 > **Note:** See [FILE_STRUCTURE.md](FILE_STRUCTURE.md) for detailed visual tree and organization guide.
 
@@ -133,7 +133,7 @@ Psychology_Score/
 - **BUG_FIX_REPORT.md** - Comprehensive documentation of all bugs fixed in v2.0
 - **screenshots/** - Folder containing automated test result captures
 
-## 💻 Installation
+## Installation
 
 ### Prerequisites
 - A modern web browser (Chrome, Firefox, Safari, Edge)
@@ -163,7 +163,7 @@ Psychology_Score/
 
 That's it! The application is ready to use.
 
-## 🧪 Testing
+## Testing
 
 The project includes comprehensive automated tests to ensure quality and reliability.
 
@@ -211,7 +211,7 @@ Tests auto-save, resume, review page, and PDF export.
 
 See `tests/BUG_FIX_REPORT.md` for detailed test results and bug fixes from v2.0 development.
 
-## 📖 Usage
+## Usage
 
 ### Taking the Assessment
 
@@ -255,7 +255,7 @@ See `tests/BUG_FIX_REPORT.md` for detailed test results and bug fixes from v2.0 
    - 🆕 **Download PDF report** for your records
    - Print or retake the assessment
 
-## 🎓 Assessment Details
+## Assessment Details
 
 ### Four Key Categories
 
@@ -299,7 +299,7 @@ Each option carries a weight from 1 to 4:
 - **3** = Good/Often
 - **4** = Excellent/Always
 
-## 🧮 Scoring Formula
+## Scoring Formula
 
 ### Category Scores
 ```javascript
@@ -326,7 +326,7 @@ Final Score = (Communication × 1.2) +
 - **Communication (1.2)** - Essential for effective interaction
 - **Stress Management (1.1)** - Important for sustainability
 
-## 📊 Classification Criteria
+## Classification Criteria
 
 | Final Score | Classification | Description |
 |------------|----------------|-------------|
@@ -351,7 +351,7 @@ Final Score = (Communication × 1.2) +
   - Leadership material
   - Should mentor others
 
-## 📸 Screenshots
+## Screenshots
 
 Screenshots of the application are available in the `tests/screenshots/` folder, showing:
 - Test completion results
@@ -382,7 +382,7 @@ Screenshots of the application are available in the `tests/screenshots/` folder,
 - Personalized improvement suggestions
 - PDF download button (v2.0)
 
-## 🎨 Customization
+## Customization
 
 ### Modifying Questions
 
@@ -441,7 +441,7 @@ if (finalScore < 80) {
 }
 ```
 
-## 🌐 Browser Support
+## Browser Support
 
 | Browser | Version | Supported |
 |---------|---------|-----------|
@@ -457,7 +457,7 @@ if (finalScore < 80) {
 - LocalStorage API
 - Canvas (for Chart.js)
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Here's how you can help:
 
@@ -489,7 +489,7 @@ Contributions are welcome! Here's how you can help:
 - Implement dark mode toggle
 - Add social media sharing capabilities
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see below for details:
 
@@ -517,16 +517,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-## 📞 Contact
+## Contact
 
 **Project Link:** [https://github.com/yourusername/Psychology_Score](https://github.com/yourusername/Psychology_Score)
 
 **Author:** Your Name
-- Email: your.email@example.com
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/yourprofile)
-- Twitter: [@yourhandle](https://twitter.com/yourhandle)
+- Email: vishnudharshan01627@gmail.com
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **Chart.js** - For beautiful data visualizations
 - **jsPDF** - For professional PDF report generation
@@ -534,7 +532,7 @@ SOFTWARE.
 - **Selenium** - For robust automated testing framework
 - **Psychology Experts** - For guidance on assessment design
 
-## 📝 Changelog
+## Changelog
 
 ### Version 2.0.0 (2026-01-08) 🆕
 **Major Feature Release**
@@ -558,7 +556,7 @@ SOFTWARE.
 - Keyboard navigation support
 - LocalStorage for temporary result storage
 
-## 🔮 Future Enhancements
+## Future Enhancements
 
 ### Planned Features
 - [ ] Backend integration with database
