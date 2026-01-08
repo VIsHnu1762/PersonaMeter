@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Results - Psychological Assessment System</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <h1>🧠 Your Assessment Results</h1>
+            <p>Professional Personality Analysis</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="results-container">
+            <!-- Overall Score Section -->
+            <div class="score-card">
+                <h2>Your Overall Score</h2>
+                <div class="final-score">
+                    <div class="score-circle">
+                        <span id="final-score" class="score-number">0</span>
+                        <span class="score-label">points</span>
+                    </div>
+                </div>
+                <div id="personality-type" class="personality-type">
+                    <h3>Loading...</h3>
+                    <p>Analyzing your results...</p>
+                </div>
+            </div>
+
+            <!-- Category Scores Section -->
+            <div class="category-scores-card">
+                <h2>📊 Category-wise Breakdown</h2>
+                <div class="scores-grid">
+                    <div class="score-item">
+                        <div class="score-item-header">
+                            <span class="trait-icon">💬</span>
+                            <h3>Communication</h3>
+                        </div>
+                        <div class="score-bar-container">
+                            <div class="score-bar">
+                                <div id="comm-bar" class="score-bar-fill" style="width: 0%"></div>
+                            </div>
+                            <span id="comm-score" class="score-value">0</span>
+                        </div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-item-header">
+                            <span class="trait-icon">👔</span>
+                            <h3>Leadership</h3>
+                        </div>
+                        <div class="score-bar-container">
+                            <div class="score-bar">
+                                <div id="lead-bar" class="score-bar-fill" style="width: 0%"></div>
+                            </div>
+                            <span id="lead-score" class="score-value">0</span>
+                        </div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-item-header">
+                            <span class="trait-icon">🧘</span>
+                            <h3>Stress Management</h3>
+                        </div>
+                        <div class="score-bar-container">
+                            <div class="score-bar">
+                                <div id="stress-bar" class="score-bar-fill" style="width: 0%"></div>
+                            </div>
+                            <span id="stress-score" class="score-value">0</span>
+                        </div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-item-header">
+                            <span class="trait-icon">🤝</span>
+                            <h3>Teamwork</h3>
+                        </div>
+                        <div class="score-bar-container">
+                            <div class="score-bar">
+                                <div id="team-bar" class="score-bar-fill" style="width: 0%"></div>
+                            </div>
+                            <span id="team-score" class="score-value">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Section -->
+            <div class="chart-card">
+                <h2>📈 Visual Analysis</h2>
+                <canvas id="resultsChart"></canvas>
+            </div>
+
+            <!-- Detailed Analysis Section -->
+            <div class="analysis-card">
+                <h2>🔍 Detailed Analysis</h2>
+                <div id="detailed-analysis" class="analysis-content">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Improvement Suggestions Section -->
+            <div class="suggestions-card">
+                <h2>💡 Improvement Suggestions</h2>
+                <div id="improvement-suggestions" class="suggestions-content">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button id="retake-btn" class="btn btn-primary">Retake Assessment</button>
+                <button id="print-btn" class="btn btn-secondary">Print Results</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Psychological Assessment System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Result Script -->
+    <script>
+        // Retrieve results from localStorage
+        const results = JSON.parse(localStorage.getItem('assessmentResults'));
+
+        // If no results found, redirect to home
+        if (!results) {
+            window.location.href = 'index.html';
+        }
+
+        // Display final score with animation
+        const finalScoreElement = document.getElementById('final-score');
+        animateNumber(finalScoreElement, 0, results.finalScore, 2000);
+
+        // Display category scores
+        displayCategoryScore('comm', results.categoryScores.Communication, 52); // Max 13 questions * 4
+        displayCategoryScore('lead', results.categoryScores.Leadership, 48); // Max 12 questions * 4
+        displayCategoryScore('stress', results.categoryScores['Stress Management'], 52); // Max 13 questions * 4
+        displayCategoryScore('team', results.categoryScores.Teamwork, 48); // Max 12 questions * 4
+
+        // Display personality type
+        displayPersonalityType(results.finalScore);
+
+        // Create chart
+        createChart(results.categoryScores);
+
+        // Display detailed analysis
+        displayDetailedAnalysis(results);
+
+        // Display improvement suggestions
+        displayImprovementSuggestions(results);
+
+        /**
+         * Animate number counting effect
+         */
+        function animateNumber(element, start, end, duration) {
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= end) {
+                    current = end;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.round(current);
+            }, 16);
+        }
+
+        /**
+         * Display individual category score with bar animation
+         */
+        function displayCategoryScore(prefix, score, maxScore) {
+            const scoreElement = document.getElementById(`${prefix}-score`);
+            const barElement = document.getElementById(`${prefix}-bar`);
+
+            // Animate score number
+            setTimeout(() => {
+                animateNumber(scoreElement, 0, score, 1500);
+
+                // Animate bar width
+                const percentage = (score / maxScore) * 100;
+                setTimeout(() => {
+                    barElement.style.width = `${percentage}%`;
+                }, 200);
+            }, 500);
+        }
+
+        /**
+         * Display personality type based on final score
+         */
+        function displayPersonalityType(finalScore) {
+            const typeElement = document.getElementById('personality-type');
+            let title, description, className;
+
+            if (finalScore < 80) {
+                title = '🌱 Needs Improvement';
+                description = 'You have significant room for growth in your professional skills. Focus on building foundational competencies.';
+                className = 'needs-improvement';
+            } else if (finalScore >= 80 && finalScore <= 130) {
+                title = '⚖️ Balanced Personality';
+                description = 'You demonstrate a well-rounded set of professional skills with good potential for further development.';
+                className = 'balanced';
+            } else {
+                title = '⭐ Strong Professional Personality';
+                description = 'You exhibit exceptional professional traits and strong leadership qualities. Continue to mentor others.';
+                className = 'strong';
+            }
+
+            typeElement.className = `personality-type ${className}`;
+            typeElement.innerHTML = `
+                <h3>${title}</h3>
+                <p>${description}</p>
+            `;
+        }
+
+        /**
+         * Create bar chart using Chart.js
+         */
+        function createChart(categoryScores) {
+            const ctx = document.getElementById('resultsChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Communication', 'Leadership', 'Stress Management', 'Teamwork'],
+                    datasets: [{
+                        label: 'Your Scores',
+                        data: [
+                            categoryScores.Communication,
+                            categoryScores.Leadership,
+                            categoryScores['Stress Management'],
+                            categoryScores.Teamwork
+                        ],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 52,
+                            ticks: {
+                                stepSize: 10
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return `Score: ${context.parsed.y}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * Display detailed analysis for each category
+         */
+        function displayDetailedAnalysis(results) {
+            const analysisElement = document.getElementById('detailed-analysis');
+            const scores = results.categoryScores;
+
+            const analysisHTML = `
+                <div class="analysis-item">
+                    <h3>💬 Communication (Score: ${scores.Communication}/52)</h3>
+                    <p>${getAnalysisText('Communication', scores.Communication, 52)}</p>
+                </div>
+                <div class="analysis-item">
+                    <h3>👔 Leadership (Score: ${scores.Leadership}/48)</h3>
+                    <p>${getAnalysisText('Leadership', scores.Leadership, 48)}</p>
+                </div>
+                <div class="analysis-item">
+                    <h3>🧘 Stress Management (Score: ${scores['Stress Management']}/52)</h3>
+                    <p>${getAnalysisText('Stress Management', scores['Stress Management'], 52)}</p>
+                </div>
+                <div class="analysis-item">
+                    <h3>🤝 Teamwork (Score: ${scores.Teamwork}/48)</h3>
+                    <p>${getAnalysisText('Teamwork', scores.Teamwork, 48)}</p>
+                </div>
+            `;
+
+            analysisElement.innerHTML = analysisHTML;
+        }
+
+        /**
+         * Get analysis text based on category and score
+         */
+        function getAnalysisText(category, score, maxScore) {
+            const percentage = (score / maxScore) * 100;
+
+            const analyses = {
+                'Communication': {
+                    low: 'Your communication skills need significant development. Focus on active listening, clear expression, and adapting your style to different audiences.',
+                    medium: 'You have decent communication abilities. Work on articulating complex ideas more clearly and reading non-verbal cues better.',
+                    high: 'Excellent communication skills! You express yourself clearly, listen actively, and adapt your style effectively. Keep refining these strengths.'
+                },
+                'Leadership': {
+                    low: 'Leadership is an area requiring substantial growth. Start by taking small initiatives and learning to motivate team members.',
+                    medium: 'You show leadership potential. Develop your decision-making under pressure and learn to delegate more effectively.',
+                    high: 'Outstanding leadership qualities! You inspire others, make sound decisions, and handle team dynamics excellently.'
+                },
+                'Stress Management': {
+                    low: 'Stress management is challenging for you. Develop coping strategies, practice mindfulness, and learn to recognize your stress triggers.',
+                    medium: 'You manage stress reasonably well. Focus on maintaining work-life balance and developing proactive stress-relief techniques.',
+                    high: 'Exceptional stress resilience! You handle pressure well, maintain focus, and recover quickly from setbacks.'
+                },
+                'Teamwork': {
+                    low: 'Teamwork skills need improvement. Practice collaboration, learn to appreciate diverse perspectives, and become more reliable.',
+                    medium: 'You collaborate fairly well with others. Enhance your ability to support struggling teammates and handle conflicts constructively.',
+                    high: 'Excellent team player! You collaborate seamlessly, support others effectively, and contribute positively to team dynamics.'
+                }
+            };
+
+            if (percentage < 50) return analyses[category].low;
+            if (percentage < 75) return analyses[category].medium;
+            return analyses[category].high;
+        }
+
+        /**
+         * Display improvement suggestions
+         */
+        function displayImprovementSuggestions(results) {
+            const suggestionsElement = document.getElementById('improvement-suggestions');
+            const scores = results.categoryScores;
+
+            // Find areas needing most improvement
+            const maxScores = {
+                'Communication': 52,
+                'Leadership': 48,
+                'Stress Management': 52,
+                'Teamwork': 48
+            };
+
+            const percentages = {
+                'Communication': (scores.Communication / maxScores.Communication) * 100,
+                'Leadership': (scores.Leadership / maxScores.Leadership) * 100,
+                'Stress Management': (scores['Stress Management'] / maxScores['Stress Management']) * 100,
+                'Teamwork': (scores.Teamwork / maxScores.Teamwork) * 100
+            };
+
+            const sortedCategories = Object.entries(percentages)
+                .sort((a, b) => a[1] - b[1])
+                .slice(0, 2);
+
+            const suggestions = {
+                'Communication': [
+                    'Join a public speaking club like Toastmasters',
+                    'Practice active listening by summarizing what others say',
+                    'Read books on effective communication',
+                    'Seek feedback on your communication style regularly'
+                ],
+                'Leadership': [
+                    'Take on leadership roles in small projects',
+                    'Study successful leaders and their strategies',
+                    'Practice decision-making in low-risk situations',
+                    'Attend leadership workshops or seminars'
+                ],
+                'Stress Management': [
+                    'Develop a daily meditation or mindfulness practice',
+                    'Exercise regularly to build physical and mental resilience',
+                    'Learn time management and prioritization techniques',
+                    'Maintain a stress journal to identify patterns'
+                ],
+                'Teamwork': [
+                    'Volunteer for team-based projects',
+                    'Practice giving and receiving constructive feedback',
+                    'Learn about different personality types and working styles',
+                    'Celebrate team successes and acknowledge contributions'
+                ]
+            };
+
+            let suggestionsHTML = '<div class="suggestions-list">';
+
+            sortedCategories.forEach(([category, percentage]) => {
+                suggestionsHTML += `
+                    <div class="suggestion-category">
+                        <h3>Focus Area: ${category} (${percentage.toFixed(1)}%)</h3>
+                        <ul>
+                            ${suggestions[category].map(s => `<li>${s}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            });
+
+            suggestionsHTML += '</div>';
+            suggestionsElement.innerHTML = suggestionsHTML;
+        }
+
+        // Event Listeners
+        document.getElementById('retake-btn').addEventListener('click', () => {
+            localStorage.removeItem('assessmentResults');
+            window.location.href = 'index.html';
+        });
+
+        document.getElementById('print-btn').addEventListener('click', () => {
+            window.print();
+        });
+    </script>
+</body>
+
+</html>

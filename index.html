@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychological Assessment System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <h1>🧠 Psychological Assessment Test</h1>
+            <p>Discover your professional personality traits</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="screen active">
+            <div class="welcome-card">
+                <h2>Welcome to Your Professional Assessment</h2>
+                <p class="intro-text">
+                    This comprehensive assessment evaluates four key professional traits:
+                </p>
+                <div class="traits-grid">
+                    <div class="trait-item">
+                        <span class="trait-icon">💬</span>
+                        <h3>Communication</h3>
+                        <p>Your ability to express ideas and listen effectively</p>
+                    </div>
+                    <div class="trait-item">
+                        <span class="trait-icon">👔</span>
+                        <h3>Leadership</h3>
+                        <p>Your capacity to guide and motivate others</p>
+                    </div>
+                    <div class="trait-item">
+                        <span class="trait-icon">🧘</span>
+                        <h3>Stress Management</h3>
+                        <p>Your resilience and coping mechanisms</p>
+                    </div>
+                    <div class="trait-item">
+                        <span class="trait-icon">🤝</span>
+                        <h3>Teamwork</h3>
+                        <p>Your collaboration and interpersonal skills</p>
+                    </div>
+                </div>
+                <div class="test-info">
+                    <p><strong>📝 Test Details:</strong></p>
+                    <ul>
+                        <li>50 multiple-choice questions</li>
+                        <li>Approximately 10-15 minutes to complete</li>
+                        <li>Answer honestly for accurate results</li>
+                        <li>No right or wrong answers</li>
+                    </ul>
+                </div>
+                <button id="start-btn" class="btn btn-primary">Start Assessment</button>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="screen">
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span id="progress-text">Question 1 of 50</span>
+                    <span id="category-badge" class="category-badge">Communication</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="question-card">
+                <h2 id="question-text" class="question-text"></h2>
+                <div id="options-container" class="options-container">
+                    <!-- Options will be dynamically inserted here -->
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="nav-buttons">
+                <button id="prev-btn" class="btn btn-secondary" disabled>Previous</button>
+                <button id="next-btn" class="btn btn-primary" disabled>Next</button>
+                <button id="submit-btn" class="btn btn-success" style="display: none;">Submit Test</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Psychological Assessment System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
